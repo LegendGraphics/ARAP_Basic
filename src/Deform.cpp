@@ -3,7 +3,7 @@
 using namespace std;
 using namespace Eigen;
 
-Deform::Deform(double *P, int P_Num, AdjList &adj_list, FaceList &face_list)
+Deform::Deform(double *P_data, int P_Num, AdjList &adj_list, FaceList &face_list)
     : adj_list(adj_list), max_iter(2000), min_delta(1e-3), lamd_deform(5)
 {
     P.resize(3, P_Num);

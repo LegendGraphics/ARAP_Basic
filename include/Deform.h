@@ -1,6 +1,8 @@
 #ifndef _Deform_H
 #define _Deform_H
 
+#define ARAP_DLL_EXPORTS
+
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -9,6 +11,8 @@
 #include <Eigen\Sparse>
 
 #include "WunderSVD3x3.h"
+
+#include "arap_wrapper.h"
 
 class ARAP_DLL_API Deform
 {
