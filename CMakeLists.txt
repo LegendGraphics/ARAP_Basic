@@ -19,7 +19,7 @@ QT4_WRAP_UI( Project_UIS_H ${Project_UIS} )
 
 QT4_WRAP_CPP( Project_MOC_SRCS ${Project_MOC_HDRS} )
 
-INCLUDE_DIRECTORIES( ${Project_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${VTK_DIR} ../../eigen/ )
+INCLUDE_DIRECTORIES( ${Project_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${VTK_DIR} ../eigen/ )
 
 #SET( Project_RCCS MyProject.qrc )
 #QT4_ADD_RESOURCES( Project_RCC_SRCS ${Project_RCCS} )

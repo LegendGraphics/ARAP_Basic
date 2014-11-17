@@ -1,11 +1,11 @@
 #include "Arap.h"
-
+using namespace std;
 Arap::Arap()
 {
 	setupUi(this);
 
 	m_SkullMesh = vtkSmartPointer< vtkOBJReader >::New();
-	char *fileName = "D:\\Projects\\CranioViewer\\skullShell_lowReso.obj";
+	char *fileName = "D://Projects//arap//one-petal-sim.obj";
 	m_SkullMesh->SetFileName(fileName);
 	m_SkullMesh->Update();
 
@@ -130,7 +130,7 @@ void Arap::update_result()
 		}
 	}
 	double delta;
-	float *temp = model->do_Deform_Iter(T, idx_T, delta);
+	float *temp = model->do_Deform_Iter(delta);
 	cout << "delta: " << delta << endl;
 	vtkSmartPointer< vtkPolyData > skullModelPolydata = vtkSmartPointer< vtkPolyData >::New();
 	skullModelPolydata->DeepCopy(m_SkullMesh->GetOutput());
@@ -157,16 +157,16 @@ void Arap::update_final()
 	vector<double> T;
 	vector<int> idx_T;
 	for (int i = 0; i != m_SkullMesh->GetOutput()->GetNumberOfPoints(); ++i) {
-		if (abs(src[3*i+2]-50) < 1){// || abs(src[3*i+2]-12) < 1) {
-			T.push_back(src[3*i]);
-			T.push_back(src[3*i+1]);
-			T.push_back(src[3*i+2]);
+		if (abs(src[3 * i + 2] - 900) < 5){// || abs(src[3*i+2]-12) < 1) {
+			T.push_back(src[3 * i] + 50);
+			T.push_back(src[3 * i + 1] + 50);
+			T.push_back(src[3 * i + 2]);
 			idx_T.push_back(i);
 		}
-		else if (abs(src[3*i+2]-100) < 1){// || abs(src[3*i+2]-162) < 1) {
-			T.push_back(src[3*i]+50);
-			T.push_back(src[3*i+1]+50);
-			T.push_back(src[3*i+2]);
+		else {//if (abs(src[3*i+2]-46) < 1){// || abs(src[3*i+2]-162) < 1) {
+			T.push_back(src[3 * i] - 50);
+			T.push_back(src[3 * i + 1] - 50);
+			T.push_back(src[3 * i + 2]);
 			idx_T.push_back(i);
 		}
 	}
@@ -183,8 +183,9 @@ void Arap::update_final()
 	double delta;
 	int max_iter = 500;
 	int iter = 0;
+	model->set_linear_sys(T, idx_T);
 	do {
-		float *temp = model->do_Deform_Iter(T, idx_T, delta);
+		float *temp = model->do_Deform_Iter(delta);
 		cout << "delta: " << delta << endl;
 		++iter;
 		vtkSmartPointer< vtkPolyData > skullModelPolydata = vtkSmartPointer< vtkPolyData >::New();
