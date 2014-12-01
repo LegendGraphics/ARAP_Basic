@@ -4,7 +4,7 @@ using namespace std;
 using namespace Eigen;
 
 Deform::Deform(double *P_data, int P_Num, AdjList &adj_list, FaceList &face_list)
-    : adj_list(adj_list), max_iter(2000), min_delta(1e-3), lamd_deform(5)
+    : adj_list(adj_list), max_iter(2000), min_delta(1e-3), lamd_deform(5), lamd_hard(5)
 {
     P.resize(3, P_Num);
     for (int i = 0; i != P_Num; ++i) {P.col(i) << P_data[3*i], P_data[3*i+1], P_data[3*i+2];}
@@ -177,4 +177,34 @@ void Deform::set_linear_sys(VectorD &T, VectorI &idx_T)
 	}
 
 	chol.factorize(L_cur);
+}
+
+void Deform::set_linear_sys(VectorD &T, VectorI &idx_T, VectorD &F, VectorI &idx_F)
+{
+	decltype(adj_list.size()) P_Num = adj_list.size();
+	d = MatrixX3f::Zero(P_Num, 3);
+	SparseMatrix<float> L_cur = L;
+	
+	
+	for (decltype(idx_T.size()) i = 0; i != idx_T.size(); ++i) {
+		d.row(idx_T[i]) += (lamd_deform/2)*RowVector3f(T[3*i], T[3*i+1], T[3*i+2]);
+		L_cur.coeffRef(idx_T[i], idx_T[i]) += lamd_deform/2;
+		L_cur.coeffRef(idx_T[i]+P_Num, idx_T[i]+P_Num) += lamd_deform/2;
+		L_cur.coeffRef(idx_T[i]+2*P_Num, idx_T[i]+2*P_Num) += lamd_deform/2;
+	}
+	
+	for (decltype(idx_F.size()) i = 0; i != idx_F.size(); ++i) {
+		d.row(idx_F[i]) += (lamd_hard/2)*RowVector3f(F[3*i], F[3*i+1], F[3*i+2]);
+		L_cur.coeffRef(idx_F[i], idx_F[i]) += lamd_hard/2;
+		L_cur.coeffRef(idx_F[i]+P_Num, idx_F[i]+P_Num) += lamd_hard/2;
+		L_cur.coeffRef(idx_F[i]+2*P_Num, idx_F[i]+2*P_Num) += lamd_hard/2;
+	}
+
+	chol.factorize(L_cur);
+}
+
+void Deform::set_lamd(float lamd_deform, float lamd_hard)
+{
+	this->lamd_deform = lamd_deform;
+	this->lamd_hard = lamd_hard;
 }

@@ -27,11 +27,26 @@ public:
     Deform(){};
     ~Deform(){};
     Deform(double *P, int P_Num, AdjList &adj_list, FaceList &face_list);
-
+	
+	// old complete deform call
     float *do_Deform(VectorD &T, VectorI &idx_T);
+	
+	// get current P' point i stores from P_Prime[3*i + 0]
     float *get_P_Prime();
+	
+	// do deform one iterate, returned curret P'
     float *do_Deform_Iter(double &delta);
+	
+	// set linear system. T is the target point, idx_T is the corresponding
+	// indices of these points to model. You can tune lamd_deform for them
 	void set_linear_sys(VectorD &T, VectorI &idx_T);
+	
+	// set linear system. F is another set of target point working 
+	// similarly to T. You can tune lamd_hard for them
+	void set_linear_sys(VectorD &T, VectorI &idx_T, VectorD &F, VectorI &idx_F);
+	
+	// set lamd. Default is 5 and 5
+	void set_lamd(float lamd_deform, float lamd_hard);
 
 private:
     void update_Ri();
@@ -53,6 +68,7 @@ private:
     int max_iter;
     double min_delta;
     float lamd_deform;
+	float lamd_hard;
 };
 
 #endif
